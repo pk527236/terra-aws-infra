@@ -1,5 +1,3 @@
-# modules/security-group/variables.tf
-
 variable "env" {
   description = "Environment name"
   type        = string
@@ -18,13 +16,13 @@ variable "vpc_cidr" {
 variable "ssh_cidr_blocks" {
   description = "CIDR blocks allowed for SSH access"
   type        = list(string)
-  default     = ["0.0.0.0/0"]  # Restrict this in production
+  default     = ["10.0.0.0/8"]
 }
 
 variable "monitoring_cidr_blocks" {
   description = "CIDR blocks allowed for monitoring services"
   type        = list(string)
-  default     = ["0.0.0.0/0"]  # Restrict this in production
+  default     = ["10.0.0.0/8"]
 }
 
 variable "tags" {

@@ -1,6 +1,29 @@
-variable "env" {}
-variable "vpc_cidr" {}
-variable "public_subnets" { type = list(string) }
-variable "private_subnets" { type = list(string) }
-variable "azs" { type = list(string) }
-variable "tags" { type = map(string) }
+variable "env" {
+  description = "Environment name"
+  type        = string
+}
+
+variable "vpc_cidr" {
+  description = "CIDR block for VPC"
+  type        = string
+}
+
+variable "public_subnets" {
+  description = "CIDR blocks for public subnets"
+  type        = list(string)
+}
+
+variable "private_subnets" {
+  description = "CIDR blocks for private subnets"
+  type        = list(string)
+}
+
+variable "azs" {
+  description = "Availability zones"
+  type        = list(string)
+}
+
+variable "tags" {
+  description = "Common tags to be applied to all resources"
+  type        = map(string)
+}

@@ -1,5 +1,3 @@
-# modules/security-group/main.tf
-
 # ALB Security Group
 resource "aws_security_group" "alb" {
   name_prefix = "${var.env}-alb-"
@@ -33,6 +31,10 @@ resource "aws_security_group" "alb" {
     Name = "${var.env}-alb-sg"
     Type = "ALB"
   })
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # EC2 Security Group
@@ -81,6 +83,15 @@ resource "aws_security_group" "ec2" {
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
   }
+
+  # For Nginx status endpoint
+  ingress {
+    description = "Nginx Status"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+  }
   
   egress {
     description = "All outbound traffic"
@@ -94,6 +105,10 @@ resource "aws_security_group" "ec2" {
     Name = "${var.env}-ec2-sg"
     Type = "EC2"
   })
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Monitoring Security Group
@@ -153,4 +168,8 @@ resource "aws_security_group" "monitoring" {
     Name = "${var.env}-monitoring-sg"
     Type = "Monitoring"
   })
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

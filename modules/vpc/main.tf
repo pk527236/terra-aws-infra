@@ -24,7 +24,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = merge(var.tags, {
-    Name = "${var.env}-public-${count.index}"
+    Name = "${var.env}-public-${count.index + 1}"
   })
 }
 
@@ -35,12 +35,12 @@ resource "aws_subnet" "private" {
   availability_zone = var.azs[count.index]
 
   tags = merge(var.tags, {
-    Name = "${var.env}-private-${count.index}"
+    Name = "${var.env}-private-${count.index + 1}"
   })
 }
 
 resource "aws_eip" "nat" {
-  vpc = true
+  domain = "vpc"
 
   tags = merge(var.tags, {
     Name = "${var.env}-nat-eip"
