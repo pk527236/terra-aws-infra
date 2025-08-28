@@ -1,4 +1,3 @@
-# ==============================================================================
 # MODULES/ALB/VARIABLES.TF
 # ==============================================================================
 
@@ -13,13 +12,25 @@ variable "vpc_id" {
 }
 
 variable "subnet_ids" {
-  description = "Subnets for ALB"
+  description = "Subnets for ALB (should be public subnets)"
   type        = list(string)
 }
 
 variable "security_groups" {
   description = "Security groups for ALB"
   type        = list(string)
+}
+
+variable "enable_https" {
+  description = "Enable HTTPS listener"
+  type        = bool
+  default     = false
+}
+
+variable "certificate_arn" {
+  description = "ARN of the SSL certificate for HTTPS listener"
+  type        = string
+  default     = null
 }
 
 variable "tags" {

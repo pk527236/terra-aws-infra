@@ -1,10 +1,13 @@
+# MODULES/SECURITY-GROUP/MAIN.TF
+# ==============================================================================
+
 # ALB Security Group
 resource "aws_security_group" "alb" {
   name_prefix = "${var.env}-alb-"
   vpc_id      = var.vpc_id
   
   ingress {
-    description = "HTTP"
+    description = "HTTP from Internet"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -12,7 +15,7 @@ resource "aws_security_group" "alb" {
   }
   
   ingress {
-    description = "HTTPS"
+    description = "HTTPS from Internet"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -59,34 +62,42 @@ resource "aws_security_group" "ec2" {
   }
   
   ingress {
-    description = "SSH"
+    description = "SSH from specific networks"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = var.ssh_cidr_blocks
   }
   
-  # For Prometheus monitoring
+  # For Prometheus Node Exporter
   ingress {
-    description = "Node Exporter"
+    description = "Node Exporter from monitoring"
     from_port   = 9100
     to_port     = 9100
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
   }
   
-  # For Nginx Exporter
+  # For Nginx Prometheus Exporter
   ingress {
-    description = "Nginx Exporter"
+    description = "Nginx Exporter from monitoring"
     from_port   = 9113
     to_port     = 9113
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
   }
 
-  # For Nginx status endpoint
+  # For Nginx status endpoint (used by health checks and monitoring)
   ingress {
-    description = "Nginx Status"
+    description     = "Nginx Status from ALB and monitoring"
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
+  }
+  
+  ingress {
+    description = "Nginx Status from VPC"
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
@@ -117,7 +128,7 @@ resource "aws_security_group" "monitoring" {
   vpc_id      = var.vpc_id
   
   ingress {
-    description = "Prometheus"
+    description = "Prometheus from monitoring networks"
     from_port   = 9090
     to_port     = 9090
     protocol    = "tcp"
@@ -125,7 +136,7 @@ resource "aws_security_group" "monitoring" {
   }
   
   ingress {
-    description = "Grafana"
+    description = "Grafana from monitoring networks"
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
@@ -133,7 +144,7 @@ resource "aws_security_group" "monitoring" {
   }
   
   ingress {
-    description = "Alertmanager"
+    description = "Alertmanager from monitoring networks"
     from_port   = 9093
     to_port     = 9093
     protocol    = "tcp"
@@ -141,7 +152,7 @@ resource "aws_security_group" "monitoring" {
   }
   
   ingress {
-    description = "Jenkins"
+    description = "Jenkins from monitoring networks"
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
@@ -149,7 +160,7 @@ resource "aws_security_group" "monitoring" {
   }
   
   ingress {
-    description = "SSH"
+    description = "SSH from specific networks"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"

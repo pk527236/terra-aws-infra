@@ -1,3 +1,6 @@
+# MODULES/SECURITY-GROUP/VARIABLES.TF
+# ==============================================================================
+
 variable "env" {
   description = "Environment name"
   type        = string
