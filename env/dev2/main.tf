@@ -33,6 +33,8 @@ module "alb" {
   vpc_id          = module.vpc.vpc_id
   subnet_ids      = module.vpc.public_subnets
   security_groups = [module.security_group.alb_security_group_id]
+  enable_https    = var.enable_https
+  certificate_arn = var.certificate_arn
   tags            = var.tags
 }
 
@@ -47,9 +49,12 @@ module "asg" {
   min_size              = var.min_size
   max_size              = var.max_size
   desired_capacity      = var.desired_capacity
-  target_group_arns     = [module.alb.target_group_arn]
+  # Pass all target groups to ASG
+  target_group_arns     = module.alb.all_target_group_arns
   tags                  = var.tags
 }
+
+# Uncomment when ready to add monitoring
 # module "monitoring" {
 #   source                       = "../../modules/monitoring"
 #   env                          = var.env
@@ -63,6 +68,6 @@ module "asg" {
 #   # Variables for templatefile in main.tf
 #   prometheus_targets     = []              # list of strings for Prometheus targets
 #   docker_compose_version = "2.21.0"        # Docker Compose version
-#   asg_name               = "dev-web-asg"   # must match ASG created by asg module
-#   aws_region             = var.region      # pass region (lowercase to match variable name)
+#   asg_name               = module.asg.asg_name   # Use actual ASG name
+#   aws_region             = var.region      # pass region
 # }
