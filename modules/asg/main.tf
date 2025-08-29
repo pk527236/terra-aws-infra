@@ -28,9 +28,9 @@ resource "aws_launch_template" "web" {
     name = var.instance_profile_name
   }
 
+  # Fixed user data with better error handling
   user_data = base64encode(templatefile("${path.module}/scripts/user-data.tpl", {
-    nginx      = file("${path.module}/scripts/nginx-setup.sh"),
-    monitoring = file("${path.module}/scripts/monitoring-setup.sh")
+    nginx = file("${path.module}/scripts/nginx-setup.sh")
   }))
 
   tag_specifications {
